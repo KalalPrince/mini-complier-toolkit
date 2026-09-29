@@ -1,0 +1,25 @@
+{
+  "name": "system-software-pbl",
+  "version": "1.0.0",
+  "description": "Mini System Software Toolkit (BE05000261) - Application/Software Development",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test:stage1": "node tests/test_stage1_symtab.js",
+    "test:stage2": "node tests/test_stage2_lexer.js",
+    "test:stage3": "node tests/test_stage3_quads.js",
+    "test:stage4": "node tests/test_stage4_optimizer.js",
+    "test:stage5": "node tests/test_stage5_assembler.js",
+    "test:pipeline": "node tests/test_phase1_pipeline.js",
+    "test:ui": "node tests/test_phase2_ui.js"
+  },
+  "keywords": [
+    "system-software",
+    "compiler",
+    "assembler",
+    "symbol-table",
+    "pbl"
+  ],
+  "author": "Computer Engineering Student",
+  "license": "ISC"
+}

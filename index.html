@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mini System Software Toolkit (BE05000261) - Educational Web Dashboard for 5-Stage Compiler and Two-Pass Assembler Pipeline">
+  <title>Compiler & System Software Laboratory | Mini System Software Toolkit</title>
+  <!-- Google Fonts with offline fallback in CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-badge">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+            <rect x="9" y="9" width="6" height="6"></rect>
+            <line x1="9" y1="1" x2="9" y2="4"></line>
+            <line x1="15" y1="1" x2="15" y2="4"></line>
+            <line x1="9" y1="20" x2="9" y2="23"></line>
+            <line x1="15" y1="20" x2="15" y2="23"></line>
+            <line x1="20" y1="9" x2="23" y2="9"></line>
+            <line x1="20" y1="14" x2="23" y2="14"></line>
+            <line x1="1" y1="9" x2="4" y2="9"></line>
+            <line x1="1" y1="14" x2="4" y2="14"></line>
+          </svg>
+        </div>
+        <div class="header-titles">
+          <h1 class="main-title">Compiler &amp; System Software Laboratory</h1>
+          <p class="sub-title">Mini System Software Toolkit (BE05000261) &bull; 5-Stage Integrated Translation Pipeline</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="badge badge-tech">SIC Machine Architecture</span>
+        <span class="badge badge-tech">Two-Pass Assembler</span>
+        <span class="badge badge-success" id="overallBadge">Ready</span>
+      </div>
+    </header>
+
+    <!-- Top Workspace: Editor + Status Card -->
+    <main class="workspace-grid">
+      <!-- Left Column: Source Code Editor -->
+      <section class="card editor-card" aria-labelledby="editorHeading">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 id="editorHeading" class="card-title">
+              <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              Source Program Editor
+            </h2>
+            <span class="badge badge-neutral">C-Subset</span>
+          </div>
+
+          <div class="preset-selector-group">
+            <label for="samplePreset" class="preset-label">Sample Presets:</label>
+            <select id="samplePreset" class="input-select" aria-label="Select Sample Program">
+              <option value="pipeline">1. Default Pipeline (sample_pipeline.c)</option>
+              <option value="complex">2. Complex Arithmetic &amp; Parentheses</option>
+              <option value="algebraic">3. Algebraic Simplification Rules</option>
+              <option value="cse">4. Common Subexpression Elimination</option>
+              <option value="lexError">5. Error Demo: Lexical Character</option>
+              <option value="exprError">6. Error Demo: Invalid Syntax</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Configuration Bar: Program Name and Start Address -->
+        <div class="editor-config-bar">
+          <div class="config-field">
+            <label for="progNameInput">Program Name:</label>
+            <input type="text" id="progNameInput" class="input-text" value="CALC" maxlength="6" placeholder="PROG">
+          </div>
+          <div class="config-field">
+            <label for="startAddrInput">Start Address (Hex):</label>
+            <input type="text" id="startAddrInput" class="input-text" value="1000" maxlength="4" placeholder="1000">
+          </div>
+          <div class="editor-meta">
+            <span id="editorLineCount">Lines: 11</span>
+            <span class="meta-sep">&bull;</span>
+            <span id="editorCharCount">Chars: 134</span>
+          </div>
+        </div>
+
+        <!-- Code Editor Area with Line Numbers -->
+        <div class="editor-container">
+          <div id="lineNumbers" class="line-numbers" aria-hidden="true">1</div>
+          <textarea
+            id="sourceEditor"
+            class="source-textarea"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+            aria-label="Source Code Input"
+            placeholder="// Enter your C-subset source statements here..."></textarea>
+        </div>
+
+        <!-- Action Toolbar -->
+        <div class="editor-toolbar">
+          <div class="toolbar-left">
+            <button id="btnCompile" class="btn btn-primary" title="Compile and assemble source program">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>COMPILE PIPELINE</span>
+            </button>
+            <button id="btnLoadSample" class="btn btn-secondary" title="Load chosen sample program">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>Load Sample</span>
+            </button>
+            <button id="btnClear" class="btn btn-outline" title="Clear editor and all outputs">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <polyline points="23 20 23 14 17 14"></polyline>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+              </svg>
+              <span>Clear</span>
+            </button>
+          </div>
+          <div class="toolbar-right">
+            <span class="keyboard-tip"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to compile</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Pipeline Status & System Overview -->
+      <section class="card status-card" aria-labelledby="statusHeading">
+        <div class="card-header">
+          <h2 id="statusHeading" class="card-title">
+            <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Pipeline Status
+          </h2>
+          <span class="status-summary-tag" id="statusSummaryTag">Ready to Compile</span>
+        </div>
+
+        <!-- 5 Visual Stages Flow -->
+        <div class="stages-flow" id="stagesFlow">
+          <!-- Stage 1: Lexical Analysis -->
+          <div class="stage-step" id="stageStep1">
+            <div class="stage-icon-wrap" id="stageIcon1">
+              <span class="stage-num">1</span>
+            </div>
+            <div class="stage-info">
+              <div class="stage-name-row">
+                <span class="stage-name">Lexical Analysis</span>
+                <span class="stage-badge badge-idle" id="badgeStage1">Not Run</span>
+              </div>
+              <p class="stage-desc" id="descStage1">Tokenization, constant recognition, &amp; comment stripping</p>
+            </div>
+          </div>
+
+          <!-- Stage 2: Symbol Table (Part of Front-End) -->
+          <div class="stage-step" id="stageStep2">
+            <div class="stage-icon-wrap" id="stageIcon2">
+              <span class="stage-num">2</span>
+            </div>
+            <div class="stage-info">
+              <div class="stage-name-row">
+                <span class="stage-name">Symbol Table</span>
+                <span class="stage-badge badge-idle" id="badgeStage2">Not Run</span>
+              </div>
+              <p class="stage-desc" id="descStage2">Scoped declarations, addresses, &amp; reference tracking</p>
+            </div>
+          </div>
+
+          <!-- Stage 3: Intermediate Code Generation -->
+          <div class="stage-step" id="stageStep3">
+            <div class="stage-icon-wrap" id="stageIcon3">
+              <span class="stage-num">3</span>
+            </div>
+            <div class="stage-info">
+              <div class="stage-name-row">
+                <span class="stage-name">Intermediate Code Gen</span>
+                <span class="stage-badge badge-idle" id="badgeStage3">Not Run</span>
+              </div>
+              <p class="stage-desc" id="descStage3">Infix &rarr; Postfix &rarr; Three-Address Code &amp; Quadruples</p>
+            </div>
+          </div>
+
+          <!-- Stage 4: Machine-Independent Optimization -->
+          <div class="stage-step" id="stageStep4">
+            <div class="stage-icon-wrap" id="stageIcon4">
+              <span class="stage-num">4</span>
+            </div>
+            <div class="stage-info">
+              <div class="stage-name-row">
+                <span class="stage-name">Code Optimization</span>
+                <span class="stage-badge badge-idle" id="badgeStage4">Not Run</span>
+              </div>
+              <p class="stage-desc" id="descStage4">Constant Folding, Algebraic Simplification, &amp; CSE</p>
+            </div>
+          </div>
+
+          <!-- Stage 5: Target Code Gen & Two-Pass Assembly -->
+          <div class="stage-step" id="stageStep5">
+            <div class="stage-icon-wrap" id="stageIcon5">
+              <span class="stage-num">5</span>
+            </div>
+            <div class="stage-info">
+              <div class="stage-name-row">
+                <span class="stage-name">Two-Pass Assembly</span>
+                <span class="stage-badge badge-idle" id="badgeStage5">Not Run</span>
+              </div>
+              <p class="stage-desc" id="descStage5">Pass 1 LOCCTR/SYMTAB, Pass 2 Listing &amp; H/T/E Records</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Dashboard Summary -->
+        <div class="metrics-summary">
+          <div class="metric-box">
+            <span class="metric-label">Tokens</span>
+            <span class="metric-val" id="metricTokens">—</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Symbols</span>
+            <span class="metric-val" id="metricSymbols">—</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Quadruples</span>
+            <span class="metric-val" id="metricQuads">—</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Optimizations</span>
+            <span class="metric-val" id="metricOpts">—</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Object Bytes</span>
+            <span class="metric-val" id="metricBytes">—</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">Pipeline Time</span>
+            <span class="metric-val" id="metricTime">—</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Error Callout Banner (Displayed when compilation fails) -->
+    <section id="errorBanner" class="error-banner hidden" role="alert" aria-live="assertive">
+      <div class="error-banner-header">
+        <div class="error-banner-title">
+          <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="errorStageTitle">Compilation Error &bull; Lexical Analysis</span>
+        </div>
+        <span class="badge badge-danger" id="errorCountBadge">1 Error</span>
+      </div>
+      <div class="error-banner-content" id="errorBannerContent">
+        <!-- Dynamic error message entries -->
+      </div>
+    </section>
+
+    <!-- Bottom Section: Detailed Stage Outputs with Tabs -->
+    <section class="card results-card" aria-label="Pipeline Stage Outputs">
+      <!-- Tabs Navigation -->
+      <nav class="tabs-nav" role="tablist">
+        <button class="tab-btn active" role="tab" id="tabTokens" aria-selected="true" aria-controls="panelTokens" data-tab="panelTokens">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
+          </svg>
+          <span>1. Tokens</span>
+          <span class="tab-count-badge" id="tabBadgeTokens">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" id="tabSymtab" aria-selected="false" aria-controls="panelSymtab" data-tab="panelSymtab">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>2. Symbol Table</span>
+          <span class="tab-count-badge" id="tabBadgeSymtab">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" id="tabQuads" aria-selected="false" aria-controls="panelQuads" data-tab="panelQuads">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+          <span>3. Intermediate Code</span>
+          <span class="tab-count-badge" id="tabBadgeQuads">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" id="tabOptimizer" aria-selected="false" aria-controls="panelOptimizer" data-tab="panelOptimizer">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>4. Optimization</span>
+          <span class="tab-count-badge" id="tabBadgeOptimizer">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" id="tabListing" aria-selected="false" aria-controls="panelListing" data-tab="panelListing">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          <span>5. Assembly Listing</span>
+          <span class="tab-count-badge" id="tabBadgeListing">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" id="tabObjectCode" aria-selected="false" aria-controls="panelObjectCode" data-tab="panelObjectCode">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+          </svg>
+          <span>6. Object Program (H/T/E)</span>
+          <span class="tab-count-badge" id="tabBadgeObject">0</span>
+        </button>
+
+        <button class="tab-btn" role="tab" id="tabCodeGen" role="tab" aria-selected="false" aria-controls="panelCodeGen" data-tab="panelCodeGen">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span>7. Generated SIC Source</span>
+        </button>
+      </nav>
+
+      <!-- Tab Content Area -->
+      <div class="tabs-body">
+        <!-- ============================================================ -->
+        <!-- TAB 1: TOKENS VIEW                                           -->
+        <!-- ============================================================ -->
+        <div class="tab-panel active" id="panelTokens" role="tabpanel" aria-labelledby="tabTokens">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <h3 class="panel-title">Lexical Tokens Stream</h3>
+              <p class="panel-subtitle">Output from Lexical Analyzer (Stage 2) with token classifications, coordinates, and symbol table bindings.</p>
+            </div>
+            <div class="panel-header-right">
+              <input type="text" id="tokenSearchInput" class="input-text-sm" placeholder="Filter tokens (e.g. KEYWORD)...">
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" id="tokensTable">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">#</th>
+                  <th style="width: 150px;">Token Type</th>
+                  <th>Lexeme</th>
+                  <th>Value</th>
+                  <th style="width: 80px;">Line</th>
+                  <th style="width: 80px;">Column</th>
+                </tr>
+              </thead>
+              <tbody id="tokensTableBody">
+                <tr class="empty-row"><td colspan="6">No tokens yet. Click "COMPILE PIPELINE" to process.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 2: SYMBOL TABLE VIEW                                     -->
+        <!-- ============================================================ -->
+        <div class="tab-panel" id="panelSymtab" role="tabpanel" aria-labelledby="tabSymtab">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <h3 class="panel-title">Front-End Scoped Symbol Table</h3>
+              <p class="panel-subtitle">Maintained by SymbolTable.js (Stage 1) with addresses, types, scopes, and reference tracking.</p>
+            </div>
+            <div class="panel-header-right">
+              <span class="badge badge-info" id="symtabMemoryBadge">Memory: 0 Bytes</span>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" id="symTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Scope</th>
+                  <th>Address (Dec / Hex)</th>
+                  <th>Size</th>
+                  <th>Declared Line</th>
+                  <th>Referenced Lines</th>
+                </tr>
+              </thead>
+              <tbody id="symTableBody">
+                <tr class="empty-row"><td colspan="7">No symbol entries. Click "COMPILE PIPELINE" to process.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 3: INTERMEDIATE CODE VIEW (QUADRUPLES + 3AC)              -->
+        <!-- ============================================================ -->
+        <div class="tab-panel" id="panelQuads" role="tabpanel" aria-labelledby="tabQuads">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <h3 class="panel-title">Three-Address Code &amp; Quadruples (Stage 3)</h3>
+              <p class="panel-subtitle">Generated by QuadrupleGen.js using Shunting-Yard Infix &rarr; Postfix expression translation.</p>
+            </div>
+          </div>
+
+          <div class="quads-split-view">
+            <!-- Left: Quadruple Table -->
+            <div class="quads-table-pane">
+              <h4 class="pane-subtitle">Quadruple Representation (Op, Arg1, Arg2, Result)</h4>
+              <div class="table-container">
+                <table class="data-table" id="quadsTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;">#</th>
+                      <th style="width: 90px;">Operator</th>
+                      <th>Arg 1</th>
+                      <th>Arg 2</th>
+                      <th>Result</th>
+                    </tr>
+                  </thead>
+                  <tbody id="quadsTableBody">
+                    <tr class="empty-row"><td colspan="5">No quadruples generated yet.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Right: Human-Readable 3AC -->
+            <div class="quads-code-pane">
+              <h4 class="pane-subtitle">Linear Three-Address Code (3AC)</h4>
+              <pre class="code-terminal" id="threeAddressCodeBlock"><code>// Three-Address Code instructions will appear here...</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 4: CODE OPTIMIZATION VIEW                                -->
+        <!-- ============================================================ -->
+        <div class="tab-panel" id="panelOptimizer" role="tabpanel" aria-labelledby="tabOptimizer">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <h3 class="panel-title">Code Optimization Analysis (Stage 4)</h3>
+              <p class="panel-subtitle">Iterative multi-pass optimization applying Constant Folding, Algebraic Simplification, &amp; CSE.</p>
+            </div>
+            <div class="panel-header-right">
+              <span class="badge badge-success" id="optReductionBadge">0% Instruction Reduction</span>
+            </div>
+          </div>
+
+          <!-- Optimization Metrics Strip -->
+          <div class="optimizer-metrics-strip">
+            <div class="opt-stat-card">
+              <span class="opt-stat-label">Original Quads</span>
+              <span class="opt-stat-val" id="optOrigCount">0</span>
+            </div>
+            <div class="opt-stat-card">
+              <span class="opt-stat-label">Optimized Quads</span>
+              <span class="opt-stat-val" id="optFinalCount">0</span>
+            </div>
+            <div class="opt-stat-card">
+              <span class="opt-stat-label">Constant Folding</span>
+              <span class="opt-stat-val text-accent" id="optFoldCount">0</span>
+            </div>
+            <div class="opt-stat-card">
+              <span class="opt-stat-label">Algebraic Simplification</span>
+              <span class="opt-stat-val text-accent" id="optAlgCount">0</span>
+            </div>
+            <div class="opt-stat-card">
+              <span class="opt-stat-label">Common Subexpressions</span>
+              <span class="opt-stat-val text-accent" id="optCseCount">0</span>
+            </div>
+          </div>
+
+          <!-- Before / After 3AC Comparison -->
+          <div class="comparison-split-view">
+            <div class="comparison-col">
+              <div class="col-header">
+                <span class="col-title">Before Optimization (Original 3AC)</span>
+                <span class="badge badge-neutral" id="badgeBeforeCount">0 Instructions</span>
+              </div>
+              <pre class="code-terminal" id="optBeforeBlock"><code>// Original 3AC statements...</code></pre>
+            </div>
+
+            <div class="comparison-col">
+              <div class="col-header">
+                <span class="col-title">After Optimization (Optimized 3AC)</span>
+                <span class="badge badge-success" id="badgeAfterCount">0 Instructions</span>
+              </div>
+              <pre class="code-terminal" id="optAfterBlock"><code>// Optimized 3AC statements...</code></pre>
+            </div>
+          </div>
+
+          <!-- Optimization Transformation Log -->
+          <h4 class="pane-subtitle" style="margin-top: 1.5rem;">Detailed Optimization Log</h4>
+          <div class="table-container">
+            <table class="data-table" id="optLogTable">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">#</th>
+                  <th style="width: 220px;">Optimization Technique</th>
+                  <th>Before</th>
+                  <th>After</th>
+                  <th>Rule Description</th>
+                </tr>
+              </thead>
+              <tbody id="optLogTableBody">
+                <tr class="empty-row"><td colspan="5">No optimizations recorded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 5: ASSEMBLY LISTING VIEW                                 -->
+        <!-- ============================================================ -->
+        <div class="tab-panel" id="panelListing" role="tabpanel" aria-labelledby="tabListing">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <h3 class="panel-title">Two-Pass Assembler Listing (Stage 5)</h3>
+              <p class="panel-subtitle">Translated by Two-Pass Assembler on SIC architecture with resolved addresses and machine codes.</p>
+            </div>
+            <div class="panel-header-right">
+              <div class="asm-meta-chips">
+                <span class="badge badge-neutral" id="asmProgNameBadge">Prog: CALC</span>
+                <span class="badge badge-neutral" id="asmStartAddrBadge">Start: 1000H</span>
+                <span class="badge badge-tech" id="asmLengthBadge">Length: 000000H</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="asm-split-view">
+            <!-- Assembler Program Listing -->
+            <div class="asm-listing-pane">
+              <h4 class="pane-subtitle">Two-Pass Listing Table</h4>
+              <div class="table-container">
+                <table class="data-table" id="asmListingTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 60px;">Line</th>
+                      <th style="width: 90px;">Address</th>
+                      <th style="width: 110px;">Label</th>
+                      <th style="width: 90px;">Opcode</th>
+                      <th>Operand</th>
+                      <th style="width: 130px;">Object Code</th>
+                    </tr>
+                  </thead>
+                  <tbody id="asmListingTableBody">
+                    <tr class="empty-row"><td colspan="6">No assembly listing generated yet.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Assembler SYMTAB (Address Resolution) -->
+            <div class="asm-symtab-pane">
+              <h4 class="pane-subtitle">Pass 1 Assembler SYMTAB</h4>
+              <div class="table-container">
+                <table class="data-table" id="asmSymTable">
+                  <thead>
+                    <tr>
+                      <th>Symbol</th>
+                      <th>Hex Address</th>
+                      <th>Dec Address</th>
+                      <th>Line</th>
+                    </tr>
+                  </thead>
+                  <tbody id="asmSymTableBody">
+                    <tr class="empty-row"><td colspan="4">No symbols resolved.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 6: OBJECT PROGRAM (H/T/E) VIEW                           -->
+        <!-- ============================================================ -->
+        <div class="tab-panel" id="panelObjectCode" role="tabpanel" aria-labelledby="tabObjectCode">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <h3 class="panel-title">Standard SIC Object Program</h3>
+              <p class="panel-subtitle">Educational Header (H), Text (T), and End (E) records formatted for SIC simulated loaders.</p>
+            </div>
+            <div class="panel-header-right">
+              <button id="btnCopyObject" class="btn btn-sm btn-secondary" title="Copy Object Program to clipboard">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span id="btnCopyObjectText">Copy Object Program</span>
+              </button>
+              <button id="btnDownloadObject" class="btn btn-sm btn-outline" title="Download .obj text file">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download .obj</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Object Program Viewer Card -->
+          <div class="object-records-container">
+            <pre class="code-terminal object-terminal" id="objectCodeBlock"><code>// Object Program records (H, T, E) will appear here...</code></pre>
+          </div>
+
+          <!-- Educational Breakdown of H/T/E Records -->
+          <div class="record-legend-grid">
+            <div class="legend-card">
+              <div class="legend-title"><span class="record-type-badge rec-h">H</span> Header Record</div>
+              <p class="legend-desc"><code>H ^ [ProgName] ^ [StartAddr] ^ [Length]</code></p>
+              <p class="legend-note">Specifies program name, load address, and total length in bytes (hexadecimal).</p>
+            </div>
+            <div class="legend-card">
+              <div class="legend-title"><span class="record-type-badge rec-t">T</span> Text Record</div>
+              <p class="legend-desc"><code>T ^ [StartAddr] ^ [ByteCount] ^ [ObjectCode...]</code></p>
+              <p class="legend-note">Contains assembled machine instructions and constants up to 30 bytes per record.</p>
+            </div>
+            <div class="legend-card">
+              <div class="legend-title"><span class="record-type-badge rec-e">E</span> End Record</div>
+              <p class="legend-desc"><code>E ^ [ExecutionStartAddr]</code></p>
+              <p class="legend-note">Notifies loader of the end of the program and provides the initial execution address.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 7: GENERATED SIC SOURCE CODE VIEW                        -->
+        <!-- ============================================================ -->
+        <div class="tab-panel" id="panelCodeGen" role="tabpanel" aria-labelledby="tabCodeGen">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <h3 class="panel-title">Generated SIC Assembly Source</h3>
+              <p class="panel-subtitle">Target assembly code emitted by CodeGenerator.js before being submitted to the Assembler.</p>
+            </div>
+            <div class="panel-header-right">
+              <button id="btnCopyAssembly" class="btn btn-sm btn-secondary" title="Copy generated assembly">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span id="btnCopyAssemblyText">Copy Assembly</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="assembly-source-container">
+            <pre class="code-terminal" id="generatedAssemblyBlock"><code>; Generated SIC assembly source code will appear here...</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p>&copy; 2026 Mini System Software Toolkit (BE05000261) &bull; College System Software PBL Project</p>
+        <p class="footer-links">
+          <span>Stages: 1. SymbolTable</span> &bull;
+          <span>2. Lexer</span> &bull;
+          <span>3. QuadrupleGen</span> &bull;
+          <span>4. CodeOptimizer</span> &bull;
+          <span>5. Assembler</span> &bull;
+          <span>SIC Educational Architecture</span>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite">Copied to clipboard!</div>
+
+  <!-- Main Application Script (ES Module) -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
