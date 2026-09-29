@@ -11,7 +11,8 @@
     "test:stage4": "node tests/test_stage4_optimizer.js",
     "test:stage5": "node tests/test_stage5_assembler.js",
     "test:pipeline": "node tests/test_phase1_pipeline.js",
-    "test:ui": "node tests/test_phase2_ui.js"
+    "test:ui": "node tests/test_phase2_ui.js",
+    "test:phase3": "node tests/test_phase3_integration.js"
   },
   "keywords": [
     "system-software",
