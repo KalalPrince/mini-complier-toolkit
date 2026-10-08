@@ -1,6 +1,6 @@
 /**
- * test_stage3_quads.js
- * Automated Verification Suite for Stage 3: Quadruple Generator
+ * test_quadruples.js
+ * Automated Verification Suite for Quadruple Generator
  *
  * Verifies:
  *  1. Simple Arithmetic without Assignment (a + b)
@@ -37,7 +37,7 @@ function assert(condition, testName, details = '') {
 }
 
 console.log('======================================================================');
-console.log('       STAGE 3 VERIFICATION: QUADRUPLE GENERATOR (3AC)');
+console.log('       VERIFICATION: QUADRUPLE GENERATOR (3AC)');
 console.log('======================================================================\n');
 
 const generator = new QuadrupleGen();
@@ -238,7 +238,7 @@ console.log('\nTest Suite 15: Error Handling - Unrecognized Characters');
 
 // Final Summary
 console.log('\n======================================================================');
-console.log(`STAGE 3 TEST SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
+console.log(`QUADRUPLE GENERATOR TEST SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
 console.log('======================================================================');
 
 if (failedCount > 0) {

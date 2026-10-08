@@ -5,14 +5,17 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "test:stage1": "node tests/test_stage1_symtab.js",
-    "test:stage2": "node tests/test_stage2_lexer.js",
-    "test:stage3": "node tests/test_stage3_quads.js",
-    "test:stage4": "node tests/test_stage4_optimizer.js",
-    "test:stage5": "node tests/test_stage5_assembler.js",
-    "test:pipeline": "node tests/test_phase1_pipeline.js",
-    "test:ui": "node tests/test_phase2_ui.js",
-    "test:phase3": "node tests/test_phase3_integration.js"
+    "cli": "node cli.js",
+    "test": "node tests/test_symbol_table.js && node tests/test_lexer.js && node tests/test_quadruples.js && node tests/test_optimizer.js && node tests/test_assembler.js && node tests/test_pipeline.js && node tests/test_dashboard.js && node tests/test_integration.js && node tests/test_cli.js",
+    "test:symtab": "node tests/test_symbol_table.js",
+    "test:lexer": "node tests/test_lexer.js",
+    "test:quads": "node tests/test_quadruples.js",
+    "test:optimizer": "node tests/test_optimizer.js",
+    "test:assembler": "node tests/test_assembler.js",
+    "test:pipeline": "node tests/test_pipeline.js",
+    "test:dashboard": "node tests/test_dashboard.js",
+    "test:integration": "node tests/test_integration.js",
+    "test:cli": "node tests/test_cli.js"
   },
   "keywords": [
     "system-software",

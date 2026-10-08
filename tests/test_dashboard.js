@@ -1,8 +1,8 @@
 /**
- * test_phase2_ui.js
+ * test_dashboard.js
  * Mini System Software Toolkit (BE05000261)
  *
- * Verification suite for Phase 2: Web Dashboard & UI Integration Layer
+ * Verification suite for Web Dashboard & UI Integration Layer
  */
 
 import fs from 'fs';
@@ -31,7 +31,7 @@ function assert(condition, message) {
 }
 
 console.log('======================================================================');
-console.log('       PHASE 2 VERIFICATION: WEB DASHBOARD & UI INTEGRATION');
+console.log('       WEB DASHBOARD VERIFICATION: UI INTEGRATION');
 console.log('======================================================================\n');
 
 // =============================================================================
@@ -231,7 +231,7 @@ console.log('\nTest Suite 11: Error Propagation & Handling');
 // 11.1 Lexical Error
 const lexErrRes = controller.runCompilation(SAMPLE_PRESETS.lexError);
 assert(lexErrRes.success === false, '11.1 Lexical error caught and marked failed');
-assert(lexErrRes.failedStage === 'Lexical Analysis', '11.2 Failed stage identified as "Lexical Analysis"');
+assert(lexErrRes.failedStage === 'Lexical Analysis', '11.2 Failure identified as "Lexical Analysis"');
 assert(lexErrRes.intermediateCode === null, '11.3 Intermediate code not generated on lexical error');
 assert(lexErrRes.assembly === null, '11.4 Assembly not generated on lexical error');
 assert(lexErrRes.errors.length > 0, '11.5 Error details returned with message and coordinates');
@@ -239,13 +239,13 @@ assert(lexErrRes.errors.length > 0, '11.5 Error details returned with message an
 // 11.2 Expression / Syntax Error
 const exprErrRes = controller.runCompilation(SAMPLE_PRESETS.exprError);
 assert(exprErrRes.success === false, '11.6 Expression error caught and marked failed');
-assert(exprErrRes.failedStage === 'Intermediate Code Generation', '11.7 Failed stage identified as "Intermediate Code Generation"');
+assert(exprErrRes.failedStage === 'Intermediate Code Generation', '11.7 Failure identified as "Intermediate Code Generation"');
 assert(exprErrRes.assembly === null, '11.8 Assembly not generated on expression error');
 
 // 11.3 Empty Input Error
 const emptyRes = controller.runCompilation('   ');
 assert(emptyRes.success === false, '11.9 Empty input rejected');
-assert(emptyRes.failedStage === 'Input', '11.10 Failed stage identified as "Input"');
+assert(emptyRes.failedStage === 'Input', '11.10 Failure identified as "Input"');
 
 // =============================================================================
 // Test Suite 12: Clear / Reset Functionality
@@ -283,7 +283,7 @@ assert(cseRes.success === true, '15.1 CSE preset compiles cleanly');
 // SUMMARY
 // =============================================================================
 console.log('\n======================================================================');
-console.log(`PHASE 2 UI TEST SUMMARY: Total: ${totalTests} | Passed: ${passedTests} | Failed: ${failedTests}`);
+console.log(`WEB DASHBOARD TEST SUMMARY: Total: ${totalTests} | Passed: ${passedTests} | Failed: ${failedTests}`);
 console.log('======================================================================\n');
 
 if (failedTests > 0) {

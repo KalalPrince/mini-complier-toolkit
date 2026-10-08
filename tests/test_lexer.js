@@ -1,6 +1,6 @@
 /**
- * test_stage2_lexer.js
- * Automated Verification Suite for Stage 2: Lexical Analyzer + Symbol Table Integration
+ * test_lexer.js
+ * Automated Verification Suite for Lexical Analyzer + Symbol Table Integration
  *
  * Verifies:
  *  1. Basic Tokenization & Line/Col Tracking
@@ -40,7 +40,7 @@ function assert(condition, testName, details = '') {
 }
 
 console.log('======================================================================');
-console.log('       STAGE 2 VERIFICATION: LEXICAL ANALYZER + SYMTAB INTEGRATION');
+console.log('       VERIFICATION: LEXICAL ANALYZER + SYMTAB INTEGRATION');
 console.log('======================================================================\n');
 
 // Test Suite 1: Keywords Recognition
@@ -102,79 +102,76 @@ console.log('\nTest Suite 6: Delimiters');
 {
   const lexer = new Lexer();
   const res = lexer.tokenize('; , ( ) { } [ ]');
-  assert(res.tokens.length === 8, '6.1 Recognizes all 8 standard delimiters');
-  assert(res.tokens.every(t => t.type === TOKEN_TYPES.DELIMITER), '6.2 Correctly typed as DELIMITER');
+  assert(res.tokens.length === 8, '6.1 Identifies all 8 delimiters');
+  assert(res.tokens.every(t => t.type === TOKEN_TYPES.DELIMITER), '6.2 All tokens categorized as DELIMITER');
 }
 
-// Test Suite 7: Comments Handling (Single & Multi-line)
-console.log('\nTest Suite 7: Comments Handling');
+// Test Suite 7: Comment Stripping (Single-line & Multi-line)
+console.log('\nTest Suite 7: Comment Filtering');
 {
   const lexer = new Lexer();
   const code = `
-    // This is an inline comment
-    int x = 10; /* Block comment */
+    // This is a single line comment
+    int a = 10; // inline comment
     /* Multi-line
-       Comment block */
-    float y = 20.5;
+       comment block */
+    int b = 20;
   `;
   const res = lexer.tokenize(code);
-  assert(res.errors.length === 0, '7.1 Comments parsed without errors');
-  const lexemes = res.tokens.map(t => t.lexeme);
-  assert(!lexemes.some(l => l.includes('comment') || l.includes('Comment')), '7.2 Comments filtered out of token stream');
-  assert(lexemes.includes('x') && lexemes.includes('y'), '7.3 Code statements around comments retained');
+  assert(res.errors.length === 0, '7.1 Strips comments cleanly without errors');
+  const idents = res.tokens.filter(t => t.type === TOKEN_TYPES.IDENTIFIER);
+  assert(idents.length === 2 && idents[0].lexeme === 'a' && idents[1].lexeme === 'b', '7.2 Tokens emitted correctly without comment noise');
 }
 
-// Test Suite 8: Line and Column Tracking
-console.log('\nTest Suite 8: Line and Column Tracking');
+// Test Suite 8: Line and Column Coordinate Tracking
+console.log('\nTest Suite 8: Coordinate Tracking');
 {
   const lexer = new Lexer();
-  const code = 'int a;\nfloat b;\n  char c;';
+  const code = 'int a;\nint b;';
   const res = lexer.tokenize(code);
-  const aToken = res.tokens.find(t => t.lexeme === 'a');
-  const bToken = res.tokens.find(t => t.lexeme === 'b');
-  const cToken = res.tokens.find(t => t.lexeme === 'c');
-  assert(aToken.line === 1, '8.1 Variable a is on Line 1');
-  assert(bToken.line === 2, '8.2 Variable b is on Line 2');
-  assert(cToken.line === 3 && cToken.column === 8, '8.3 Variable c is on Line 3, Column 8 (after 2 spaces and char)');
+  assert(res.tokens[0].line === 1 && res.tokens[0].column === 1, '8.1 Line 1, Col 1 tracked accurately');
+  assert(res.tokens[1].line === 1 && res.tokens[1].column === 5, '8.2 Line 1, Col 5 tracked accurately');
+  assert(res.tokens[3].line === 2 && res.tokens[3].column === 1, '8.3 Line 2 newline incremented and column reset');
 }
 
-// Test Suite 9: Lexical Error - Invalid Identifiers
-console.log('\nTest Suite 9: Lexical Error - Invalid Identifiers');
+// Test Suite 9: Error Detection - Invalid Identifiers starting with a digit
+console.log('\nTest Suite 9: Error - Invalid Identifiers (Digit prefix)');
 {
   const lexer = new Lexer();
-  const res = lexer.tokenize('int 9variable = 5;');
-  assert(res.errors.length > 0, '9.1 Flags lexical error for 9variable');
-  assert(res.errors[0].lexeme === '9variable', '9.2 Identifies exact invalid lexeme');
+  const res = lexer.tokenize('int 9var = 10;');
+  assert(res.errors.length > 0, '9.1 Flags lexical error for 9var');
+  assert(res.errors[0].message.includes('cannot start with a digit'), '9.2 Explains identifiers cannot start with a digit');
+  assert(res.errors[0].lexeme === '9var', '9.3 Pinpoints offending lexeme');
 }
 
-// Test Suite 10: Lexical Error - Unterminated Strings
-console.log('\nTest Suite 10: Lexical Error - Unterminated Strings');
+// Test Suite 10: Error Detection - Unterminated String
+console.log('\nTest Suite 10: Error - Unterminated Strings');
 {
   const lexer = new Lexer();
-  const res = lexer.tokenize('char msg = "Unclosed string\nint next = 1;');
-  assert(res.errors.length > 0, '10.1 Flags lexical error for unclosed string literal');
-  assert(res.errors[0].message.includes('Unterminated string'), '10.2 Explains error clearly');
+  const res = lexer.tokenize('char str = "unterminated string;\nint a = 5;');
+  assert(res.errors.length > 0, '10.1 Flags lexical error for unterminated string');
+  assert(res.errors[0].message.includes('Unterminated string literal'), '10.2 Clear error message for string literal');
 }
 
-// Test Suite 11: Lexical Error - Unterminated Comments
-console.log('\nTest Suite 11: Lexical Error - Unterminated Comments');
+// Test Suite 11: Error Detection - Unterminated Multi-line Comment
+console.log('\nTest Suite 11: Error - Unterminated Comments');
 {
   const lexer = new Lexer();
-  const res = lexer.tokenize('/* This comment never ends\nint a = 1;');
+  const res = lexer.tokenize('/* Open comment never closed\nint a = 1;');
   assert(res.errors.length > 0, '11.1 Flags error for unterminated multi-line comment');
-  assert(res.errors[0].message.includes('Unterminated multi-line comment'), '11.2 Error describes unterminated comment');
+  assert(res.errors[0].message.includes('Unterminated multi-line comment'), '11.2 Clear error message for comment');
 }
 
-// Test Suite 12: Lexical Error - Unrecognized Characters
-console.log('\nTest Suite 12: Lexical Error - Unrecognized Characters');
+// Test Suite 12: Error Detection - Unrecognized / Invalid Characters
+console.log('\nTest Suite 12: Error - Unrecognized Characters');
 {
   const lexer = new Lexer();
-  const res = lexer.tokenize('int a = @ + $;');
-  assert(res.errors.length === 2, '12.1 Flags 2 unrecognized character errors');
-  assert(res.errors[0].lexeme === '@' && res.errors[1].lexeme === '$', '12.2 Points directly to @ and $');
+  const res = lexer.tokenize('int $money = 100 @ 20;');
+  assert(res.errors.length === 2, '12.1 Flags 2 unrecognized characters ($ and @)');
+  assert(res.errors[0].lexeme === '$' && res.errors[1].lexeme === '@', '12.2 Pinpoints unrecognized characters');
 }
 
-// Test Suite 13: Symbol Table Integration - Declarations (int a; float total; int x, y;)
+// Test Suite 13: Symbol Table Integration - Declarations
 console.log('\nTest Suite 13: Symbol Table Integration - Declarations');
 {
   const symTab = new SymbolTable(1000);
@@ -182,20 +179,15 @@ console.log('\nTest Suite 13: Symbol Table Integration - Declarations');
   const code = `
     int a;
     float total;
+    char grade;
     int x, y;
   `;
   const res = lexer.tokenize(code);
-  assert(res.errors.length === 0, '13.1 Declarations processed without errors');
-  
-  const entryA = symTab.lookup('a');
-  const entryTotal = symTab.lookup('total');
-  const entryX = symTab.lookup('x');
-  const entryY = symTab.lookup('y');
-
-  assert(entryA !== null && entryA.type === 'int', '13.2 Symbol a inserted with type int');
-  assert(entryTotal !== null && entryTotal.type === 'float', '13.3 Symbol total inserted with type float');
-  assert(entryX !== null && entryY !== null, '13.4 Comma-separated declarations (int x, y;) both inserted');
-  assert(entryY.type === 'int', '13.5 Symbol y correctly inherited type int from comma sequence');
+  assert(res.errors.length === 0, '13.1 Tokenizes declarations without errors');
+  assert(symTab.getAllEntries().length === 5, '13.2 Inserts all 5 declared identifiers into Symbol Table');
+  assert(symTab.lookup('a').type === 'int', '13.3 Symbol a has type int');
+  assert(symTab.lookup('total').type === 'float', '13.4 Symbol total has type float');
+  assert(symTab.lookup('y').type === 'int', '13.5 Symbol y correctly inherited type int from comma sequence');
 }
 
 // Test Suite 14: Symbol Table Integration - Reference Tracking
@@ -204,16 +196,15 @@ console.log('\nTest Suite 14: Symbol Table Integration - Reference Tracking');
   const symTab = new SymbolTable(1000);
   const lexer = new Lexer(symTab);
   const code = `
-    int sum = 0;
-    sum = sum + 5;
-    sum = sum * 2;
+    int sum;
+    sum = 10;
+    sum = sum + 1;
   `;
   lexer.tokenize(code);
-  const entrySum = symTab.lookup('sum');
-  assert(entrySum !== null, '14.1 Symbol sum is registered');
-  assert(entrySum.lineDeclared === 2, '14.2 Symbol sum lineDeclared is 2');
-  // References appear on lines 3 and 4
-  assert(entrySum.linesReferenced.includes(3) && entrySum.linesReferenced.includes(4), '14.3 Reference lines 3 and 4 tracked accurately');
+  const sumEntry = symTab.lookup('sum');
+  assert(sumEntry !== null, '14.1 Symbol sum is registered');
+  assert(sumEntry.lineDeclared === 2, '14.2 Symbol sum lineDeclared is 2');
+  assert(sumEntry.linesReferenced.includes(3) && sumEntry.linesReferenced.includes(4), '14.3 Reference lines 3 and 4 tracked accurately');
 }
 
 // Test Suite 15: Symbol Table Integration - Undeclared Variable Protection
@@ -221,21 +212,20 @@ console.log('\nTest Suite 15: Symbol Table Integration - Undeclared Protection')
 {
   const symTab = new SymbolTable(1000);
   const lexer = new Lexer(symTab);
-  const code = 'undeclaredVar = 42;';
+  const code = 'int x; y = x + 10;'; // y is not declared
   const res = lexer.tokenize(code);
-  
   assert(res.errors.length > 0, '15.1 Reports undeclared identifier error');
   assert(res.errors[0].message.includes('Undeclared identifier'), '15.2 Error explains undeclared identifier');
-  assert(symTab.lookup('undeclaredVar') === null, '15.3 Undeclared identifier is NOT inserted into Symbol Table');
+  assert(symTab.lookup('y') === null, '15.3 Undeclared identifier is NOT inserted into Symbol Table');
 }
 
-// Test Suite 16: Symbol Table Integration - Keywords Not Inserted
+// Test Suite 16: Symbol Table Integration - Keyword Protection
 console.log('\nTest Suite 16: Symbol Table Integration - Keyword Protection');
 {
   const symTab = new SymbolTable(1000);
   const lexer = new Lexer(symTab);
-  lexer.tokenize('int x; if (x > 0) { return x; } while (x) { break; }');
-  
+  const code = 'int x; if (x) { return 0; } while(x) {}';
+  lexer.tokenize(code);
   assert(symTab.lookup('int') === null, '16.1 Keyword int is NOT in Symbol Table');
   assert(symTab.lookup('if') === null, '16.2 Keyword if is NOT in Symbol Table');
   assert(symTab.lookup('return') === null, '16.3 Keyword return is NOT in Symbol Table');
@@ -261,7 +251,7 @@ console.log('\nTest Suite 17: Symbol Table Integration - Duplicate Declarations'
 
 // Final Summary
 console.log('\n======================================================================');
-console.log(`STAGE 2 TEST SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
+console.log(`LEXICAL ANALYZER TEST SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
 console.log('======================================================================');
 
 if (failedCount > 0) {

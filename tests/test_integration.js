@@ -1,9 +1,9 @@
 /**
- * test_phase3_integration.js
+ * test_integration.js
  * Mini System Software Toolkit (BE05000261)
  *
- * Final Integration & End-to-End Verification Suite for Phase 3.
- * Verifies complete multi-stage compilation flow, error isolation,
+ * Final Integration & End-to-End Verification Suite.
+ * Verifies complete multi-module compilation flow, error isolation,
  * sequential compilation state reset, and standalone assembly.
  */
 
@@ -33,15 +33,15 @@ function assert(condition, message) {
 }
 
 console.log('======================================================================');
-console.log('       PHASE 3 VERIFICATION: FINAL SYSTEM SOFTWARE PIPELINE');
+console.log('       SYSTEM INTEGRATION VERIFICATION: COMPILER PIPELINE');
 console.log('======================================================================\n');
 
 const pipeline = new CompilerPipeline();
 
 // =============================================================================
-// Test Suite 1: Full 5-Stage Pipeline Verification on Canonical Sample
+// Test Suite 1: Full Compilation Pipeline on Canonical Sample (sample_pipeline.c)
 // =============================================================================
-console.log('Test Suite 1: Full 5-Stage Pipeline on Canonical Sample (sample_pipeline.c)');
+console.log('Test Suite 1: Full Compilation Pipeline on Canonical Sample (sample_pipeline.c)');
 const samplePipelinePath = path.join(rootDir, 'samples', 'sample_pipeline.c');
 assert(fs.existsSync(samplePipelinePath), '1.1 samples/sample_pipeline.c exists on disk');
 
@@ -52,26 +52,26 @@ const result = pipeline.compile(sourceCode, {
 });
 
 assert(result.success === true, '1.2 Full compilation succeeds with success === true');
-assert(result.errors.length === 0, '1.3 Zero errors reported across all 5 stages');
+assert(result.errors.length === 0, '1.3 Zero errors reported across all modules');
 
-// Stage 1 & 2 Checks
-assert(result.lexicalAnalysis && result.lexicalAnalysis.tokens.length > 0, '1.4 Stage 2: Tokens stream emitted');
-assert(result.symbolTable && result.symbolTable.length === 4, '1.5 Stage 1: Symbol table populated with 4 declared variables');
+// Lexical Analysis & Symbol Table Checks
+assert(result.lexicalAnalysis && result.lexicalAnalysis.tokens.length > 0, '1.4 Lexical Analyzer: Tokens stream emitted');
+assert(result.symbolTable && result.symbolTable.length === 4, '1.5 Symbol Table: Populated with 4 declared variables');
 const symNames = result.symbolTable.map(s => s.name);
 assert(symNames.includes('a') && symNames.includes('b') && symNames.includes('c') && symNames.includes('result'),
-  '1.6 Stage 1: Symbol table contains a, b, c, result');
+  '1.6 Symbol Table: Contains a, b, c, result');
 
-// Stage 3 Checks
-assert(result.intermediateCode && result.intermediateCode.quadruples.length > 0, '1.7 Stage 3: Quadruples generated');
-assert(result.intermediateCode.threeAddressCode.length > 0, '1.8 Stage 3: Linear 3AC statements generated');
+// Intermediate Code Checks
+assert(result.intermediateCode && result.intermediateCode.quadruples.length > 0, '1.7 Quadruple Generator: Quadruples generated');
+assert(result.intermediateCode.threeAddressCode.length > 0, '1.8 Quadruple Generator: Linear 3AC statements generated');
 
-// Stage 4 Checks
-assert(result.optimizedCode && Array.isArray(result.optimizedCode.quadruples), '1.9 Stage 4: Optimized quadruples generated');
-assert(result.optimizedCode.optimizationCount >= 1, '1.10 Stage 4: Compile-time constant folding performed and logged');
+// Code Optimizer Checks
+assert(result.optimizedCode && Array.isArray(result.optimizedCode.quadruples), '1.9 Code Optimizer: Optimized quadruples generated');
+assert(result.optimizedCode.optimizationCount >= 1, '1.10 Code Optimizer: Compile-time constant folding performed and logged');
 
-// Stage 5 & Target Checks
+// Target Code Generation & Assembler Checks
 assert(result.generatedAssembly && typeof result.generatedAssembly.source === 'string', '1.11 Target: Generated SIC assembly text');
-assert(result.assembly && Array.isArray(result.assembly.listing), '1.12 Stage 5: Two-Pass Assembler listing generated');
+assert(result.assembly && Array.isArray(result.assembly.listing), '1.12 Two-Pass Assembler: Listing generated');
 assert(result.assembly.objectCode && result.assembly.objectCode.length >= 3, '1.13 Target: Object program contains H, T, E records');
 
 // =============================================================================
@@ -145,9 +145,9 @@ assert(cseRes.success === true, '3.5 CSE source compiles successfully');
 assert(cseRes.optimizedCode.optimizationCount >= 1, '3.6 Identical subexpression recognized and eliminated');
 
 // =============================================================================
-// Test Suite 4: Strict Error Propagation & Stage Isolation
+// Test Suite 4: Strict Error Propagation & Module Isolation
 // =============================================================================
-console.log('\nTest Suite 4: Strict Error Propagation & Stage Isolation');
+console.log('\nTest Suite 4: Strict Error Propagation & Module Isolation');
 
 // 4.1 Lexical Error
 const lexErrSource = `
@@ -175,12 +175,12 @@ assert(exprErrRes.errors[0].message.includes('Syntax error'), '4.9 Descriptive s
 // 4.3 Empty Source Input
 const emptyRes = pipeline.compile('');
 assert(emptyRes.success === false, '4.10 Empty string input rejected');
-assert(emptyRes.failedStage === 'Input', '4.11 Empty string halts at "Input" stage');
+assert(emptyRes.failedStage === 'Input', '4.11 Empty string halts at "Input"');
 
 // 4.4 Whitespace Only Input
 const wsRes = pipeline.compile('    \n\t  \n  ');
 assert(wsRes.success === false, '4.12 Whitespace-only input rejected');
-assert(wsRes.failedStage === 'Input', '4.13 Whitespace-only input halts at "Input" stage');
+assert(wsRes.failedStage === 'Input', '4.13 Whitespace-only input halts at "Input"');
 
 // 4.5 Invalid Assignment Target
 const badAssignSource = `
@@ -189,10 +189,10 @@ int a;
 `;
 const badAssignRes = pipeline.compile(badAssignSource);
 assert(badAssignRes.success === false, '4.14 Invalid assignment target rejected');
-assert(badAssignRes.failedStage === 'Intermediate Code Generation', '4.15 Invalid assignment target halts at Intermediate stage');
+assert(badAssignRes.failedStage === 'Intermediate Code Generation', '4.15 Invalid assignment target halts at Intermediate Code Generation');
 
 // =============================================================================
-// Test Suite 5: Sequential Compilation & State Isolation (Reset / Second Run)
+// Test Suite 5: Sequential Compilation & State Isolation (Multiple Runs)
 // =============================================================================
 console.log('\nTest Suite 5: Sequential Compilation & State Isolation (Multiple Runs)');
 const sharedPipeline = new CompilerPipeline();
@@ -245,9 +245,9 @@ const endRec = objRecords[objRecords.length - 1];
 assert(endRec === 'E^001000', '6.7 End record formatted with execution start address E^001000');
 
 // =============================================================================
-// Test Suite 7: Standalone Assembly Stage Verification (sample_assembly.asm)
+// Test Suite 7: Standalone Two-Pass Assembler Verification (sample_assembly.asm)
 // =============================================================================
-console.log('\nTest Suite 7: Standalone Assembly Stage Verification (sample_assembly.asm)');
+console.log('\nTest Suite 7: Standalone Two-Pass Assembler Verification (sample_assembly.asm)');
 const asmPath = path.join(rootDir, 'samples', 'sample_assembly.asm');
 assert(fs.existsSync(asmPath), '7.1 samples/sample_assembly.asm exists on disk');
 
@@ -265,7 +265,7 @@ assert(standaloneRes.listing.length >= 8, '7.6 Standalone sample produces comple
 // SUMMARY
 // =============================================================================
 console.log('\n======================================================================');
-console.log(`PHASE 3 INTEGRATION TEST SUMMARY: Total: ${totalTests} | Passed: ${passedTests} | Failed: ${failedTests}`);
+console.log(`SYSTEM INTEGRATION TEST SUMMARY: Total: ${totalTests} | Passed: ${passedTests} | Failed: ${failedTests}`);
 console.log('======================================================================\n');
 
 if (failedTests > 0) {

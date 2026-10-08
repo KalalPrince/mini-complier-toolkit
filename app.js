@@ -2,7 +2,7 @@
  * app.js
  * Mini System Software Toolkit (BE05000261)
  *
- * Front-end Application Controller integrating the 5-Stage Compiler Pipeline
+ * Front-end Application Controller integrating the Compiler Pipeline
  * with the interactive Educational Dashboard.
  */
 
@@ -642,7 +642,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         return;
       }
 
-      // SUCCESS: All 5 Stages Passed!
+      // SUCCESS: All Modules Passed!
       setStageState(0, 'success');
       setStageState(1, 'success');
       setStageState(2, 'success');
@@ -651,7 +651,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
       overallBadge.className = 'badge badge-success';
       overallBadge.textContent = 'Success';
-      statusSummaryTag.textContent = 'Compiled (5/5 Stages Passed)';
+      statusSummaryTag.textContent = 'Compiled (All Modules Passed)';
 
       // Update Overview Metrics
       metricTokens.textContent = result.lexicalAnalysis?.tokenCount || 0;
@@ -660,7 +660,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       metricOpts.textContent = result.optimizedCode?.optimizationCount || 0;
       metricBytes.textContent = result.assembly?.programLengthHex ? `${parseInt(result.assembly.programLengthHex, 16)} B` : '—';
 
-      // Render All Stage Outputs
+      // Render All Module Outputs
       renderTokens(result.lexicalAnalysis?.tokens || []);
       renderSymbolTable(result.symbolTable || []);
       renderIntermediateCode(result.intermediateCode);

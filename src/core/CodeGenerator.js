@@ -2,8 +2,8 @@
  * CodeGenerator.js
  * Mini System Software Toolkit (BE05000261)
  *
- * Target Code Generator adapter module that bridges Stage 4 (Optimized Quadruples)
- * to Stage 5 (Two-Pass Assembler).
+ * Target Code Generator adapter module that bridges Code Optimizer (Optimized Quadruples)
+ * to Two-Pass Assembler.
  *
  * Translates Three-Address Code / Quadruples into standard educational SIC assembly
  * statements using Accumulator-based instructions (LDA, STA, ADD, SUB, MUL, DIV, HLT)
@@ -48,7 +48,7 @@ export class CodeGenerator {
     const variablesSet = new Set();  // Set of all variable/temp names used
     let constCounter = 1;
 
-    // Register all declared symbols from Stage 1/2 SymbolTable
+    // Register all declared symbols from SymbolTable
     for (const sym of declaredSymbols) {
       if (sym && sym.name) {
         variablesSet.add(this._normalizeLabel(sym.name));

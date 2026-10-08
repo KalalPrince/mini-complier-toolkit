@@ -1,6 +1,6 @@
 /**
- * test_stage1_symtab.js
- * Automated Verification Suite for Stage 1: Symbol Table
+ * test_symbol_table.js
+ * Automated Verification Suite for Symbol Table
  *
  * Verifies:
  *  1. Insertion
@@ -34,7 +34,7 @@ function assert(condition, testName, details = '') {
 }
 
 console.log('======================================================================');
-console.log('       STAGE 1 VERIFICATION: SYMBOL TABLE & CONSTANTS');
+console.log('       VERIFICATION: SYMBOL TABLE & CONSTANTS');
 console.log('======================================================================\n');
 
 const symTab = new SymbolTable(1000);
@@ -133,7 +133,7 @@ assert(hash1 !== hash3, '12.3 Different identifiers produce different hash bucke
 
 // Summary
 console.log('\n======================================================================');
-console.log(`TEST SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
+console.log(`SYMBOL TABLE TEST SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
 console.log('======================================================================');
 
 if (failedCount > 0) {

@@ -1,6 +1,6 @@
 /**
- * test_stage5_assembler.js
- * Automated Verification Suite for Stage 5: Two-Pass Assembler
+ * test_assembler.js
+ * Automated Verification Suite for Two-Pass Assembler
  *
  * Verifies:
  *  1. Basic START / END Execution & Program Name
@@ -47,7 +47,7 @@ function assert(condition, testName, details = '') {
 }
 
 console.log('======================================================================');
-console.log('       STAGE 5 VERIFICATION: TWO-PASS ASSEMBLER');
+console.log('       TWO-PASS ASSEMBLER VERIFICATION');
 console.log('======================================================================\n');
 
 const assembler = new Assembler();
@@ -396,7 +396,7 @@ console.log('\nTest Suite 19: Empty and Malformed Source');
 
 // Final Summary
 console.log('\n======================================================================');
-console.log(`STAGE 5 TEST SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
+console.log(`TWO-PASS ASSEMBLER TEST SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
 console.log('======================================================================');
 
 if (failedCount > 0) {

@@ -1,6 +1,6 @@
 /**
- * test_phase1_pipeline.js
- * Automated Verification Suite for Phase 1 Integration: End-to-End Compiler Pipeline
+ * test_pipeline.js
+ * Automated Verification Suite for Compiler Pipeline Integration
  *
  * Verifies:
  *  1. Pipeline Initialization
@@ -40,7 +40,7 @@ function assert(condition, testName, details = '') {
 }
 
 console.log('======================================================================');
-console.log('       PHASE 1 INTEGRATION VERIFICATION: COMPILER PIPELINE');
+console.log('       COMPILER PIPELINE INTEGRATION VERIFICATION');
 console.log('======================================================================\n');
 
 const pipeline = new CompilerPipeline();
@@ -61,7 +61,7 @@ console.log('\nTest Suite 2: Lexical Analysis & Symbol Table Integration');
     a = 10;
   `;
   const res = pipeline.compile(source);
-  assert(res.success === true, '2.1 Successfully processed lexical stage');
+  assert(res.success === true, '2.1 Successfully processed lexical analysis');
   assert(res.lexicalAnalysis.tokenCount > 0, '2.2 Emitted token stream');
   const symNames = res.symbolTable.map(s => s.name);
   assert(symNames.includes('a') && symNames.includes('b'), '2.3 Symbol table received declared identifiers a and b');
@@ -141,8 +141,8 @@ console.log('\nTest Suite 6: CodeGenerator Adapter');
   assert(genRes.lines.some(l => l.includes('END')), '6.6 Contains END directive');
 }
 
-// Test Suite 7: Two-Pass Assembler Stage
-console.log('\nTest Suite 7: Two-Pass Assembler Stage');
+// Test Suite 7: Two-Pass Assembler
+console.log('\nTest Suite 7: Two-Pass Assembler');
 {
   const source = `
     int x;
@@ -151,7 +151,7 @@ console.log('\nTest Suite 7: Two-Pass Assembler Stage');
     y = x + 5;
   `;
   const res = pipeline.compile(source);
-  assert(res.success === true, '7.1 Assembly stage executed cleanly');
+  assert(res.success === true, '7.1 Assembly executed cleanly');
   assert(res.assembly.listing.length > 0, '7.2 Program Listing generated');
   assert(res.assembly.objectCode.length >= 3, '7.3 Educational Object Records (H, T, E) generated');
   assert(res.assembly.objectCode[0].startsWith('H^'), '7.4 Header record produced');
@@ -166,7 +166,7 @@ console.log('\nTest Suite 8: Complete End-to-End Sample Program');
   const sampleContent = fs.readFileSync(samplePath, 'utf-8');
   const res = pipeline.compile(sampleContent, { programName: 'DEMOPRO' });
 
-  assert(res.success === true, '8.2 Sample program compiled through all 5 stages with 0 errors');
+  assert(res.success === true, '8.2 Sample program compiled through all 5 modules with 0 errors');
   assert(res.assembly.programName === 'DEMOPRO', '8.3 Custom program name preserved through assembly');
   assert(res.symbolTable.length === 4, '8.4 4 variables declared in Symbol Table (a, b, c, result)');
   assert(res.intermediateCode.instructionCount > 0, '8.5 Intermediate 3AC instructions generated');
@@ -183,7 +183,7 @@ console.log('\nTest Suite 9: Error Propagation - Lexical Errors');
   `;
   const res = pipeline.compile(badSource);
   assert(res.success === false, '9.1 Pipeline halted on lexical error');
-  assert(res.failedStage === 'Lexical Analysis', '9.2 Flags failure at Lexical Analysis stage');
+  assert(res.failedStage === 'Lexical Analysis', '9.2 Flags failure at Lexical Analysis');
   assert(res.intermediateCode === null, '9.3 Did not continue to intermediate code generation');
   assert(res.assembly === null, '9.4 Did not continue to assembly');
   assert(res.errors.length > 0, '9.5 Descriptive lexical error returned');
@@ -200,7 +200,7 @@ console.log('\nTest Suite 10: Error Propagation - Expression Errors');
   `;
   const res = pipeline.compile(badExprSource);
   assert(res.success === false, '10.1 Pipeline halted on invalid expression syntax');
-  assert(res.failedStage === 'Intermediate Code Generation', '10.2 Flags failure at Intermediate Code stage');
+  assert(res.failedStage === 'Intermediate Code Generation', '10.2 Flags failure at Intermediate Code Generation');
   assert(res.assembly === null, '10.3 Did not generate assembly from invalid intermediate code');
 }
 
@@ -209,7 +209,7 @@ console.log('\nTest Suite 11: Error Propagation - Empty Input');
 {
   const emptyRes = pipeline.compile('');
   assert(emptyRes.success === false, '11.1 Rejects empty source input');
-  assert(emptyRes.failedStage === 'Input', '11.2 Flags failure at Input stage');
+  assert(emptyRes.failedStage === 'Input', '11.2 Flags failure at Input');
 }
 
 // Test Suite 12: Complex Arithmetic & Parentheses
@@ -231,7 +231,7 @@ console.log('\nTest Suite 12: Complex Expressions with Parentheses');
 
 // Final Summary
 console.log('\n======================================================================');
-console.log(`PHASE 1 INTEGRATION SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
+console.log(`COMPILER PIPELINE SUMMARY: Total: ${passedCount + failedCount} | Passed: ${passedCount} | Failed: ${failedCount}`);
 console.log('======================================================================');
 
 if (failedCount > 0) {

@@ -2,7 +2,7 @@
  * ExpressionParser.js
  * Mini System Software Toolkit (BE05000261)
  *
- * Adapter module that bridges Stage 2 (Lexical Analysis) and Stage 3 (Quadruple Generation).
+ * Adapter module that bridges Lexical Analysis and Quadruple Generation.
  * Extracts variable declarations and statement expressions from the token stream emitted by Lexer.
  */
 

@@ -2,11 +2,12 @@
  * CompilerPipeline.js
  * Mini System Software Toolkit (BE05000261)
  *
- * Master Integration Pipeline orchestrating all 5 stages:
- *   Stage 1 & 2: Lexical Analysis + Symbol Table
- *   Stage 3:     Quadruple / Three-Address Code Generation
- *   Stage 4:     Code Optimization (Constant Folding, CSE, Simplification)
- *   Stage 5:     Target Code Generation + Two-Pass Assembler
+ * Master Integration Pipeline orchestrating core modules:
+ *   1. Lexical Analysis
+ *   2. Symbol Table
+ *   3. Intermediate Code Generation (Quadruples / 3AC)
+ *   4. Code Optimization (Constant Folding, CSE, Simplification)
+ *   5. Target Code Generation & Two-Pass Assembler
  */
 
 import { SymbolTable } from './SymbolTable.js';
@@ -31,7 +32,7 @@ export class CompilerPipeline {
    *
    * @param {string} sourceCode - High-level language statements
    * @param {Object} [options={}] - Compiler options (e.g. programName, startAddress)
-   * @returns {Object} Comprehensive compilation artifacts across all 5 stages
+   * @returns {Object} Comprehensive compilation artifacts across all modules
    */
   compile(sourceCode, options = {}) {
     if (!sourceCode || typeof sourceCode !== 'string' || !sourceCode.trim()) {
@@ -43,7 +44,7 @@ export class CompilerPipeline {
     }
 
     // =========================================================================
-    // STAGES 1 & 2: Lexical Analysis & Symbol Table
+    // MODULES 1 & 2: Lexical Analysis & Symbol Table
     // =========================================================================
     const symtab = new SymbolTable();
     const lexer = new Lexer(symtab);
@@ -69,7 +70,7 @@ export class CompilerPipeline {
     }
 
     // =========================================================================
-    // STAGE 3: Expression Parsing & Intermediate Code Generation (Quadruples)
+    // MODULE 3: Expression Parsing & Intermediate Code Generation (Quadruples)
     // =========================================================================
     const expressions = this.expressionParser.extractExpressions(lexResult.tokens);
     const allQuadruples = [];
@@ -100,7 +101,7 @@ export class CompilerPipeline {
     }
 
     // =========================================================================
-    // STAGE 4: Machine-Independent Code Optimization
+    // MODULE 4: Machine-Independent Code Optimization
     // =========================================================================
     let optResult = {
       success: true,
@@ -124,7 +125,7 @@ export class CompilerPipeline {
     }
 
     // =========================================================================
-    // STAGE 5: Target Code Generation & Two-Pass Assembly
+    // MODULE 5: Target Code Generation & Two-Pass Assembly
     // =========================================================================
     const quadsToTranslate =
       optResult.success && optResult.optimizedQuadruples.length > 0
